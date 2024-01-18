@@ -4,8 +4,11 @@ import {useRouter } from 'vue-router'
 import formData from '../data/SignupFormData.json'
 import Form from '../components/AuthForm.vue'
 
-const router = useRouter();
+definePageMeta({
+  middleware: 'auth'
+})
 
+const router = useRouter();
 const props = defineProps(['user']);
 
 

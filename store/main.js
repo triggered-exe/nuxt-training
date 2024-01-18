@@ -6,7 +6,9 @@ export const useMainStore = defineStore('main', {
     user: null,
   }),
   getters: {
-    isLogged: (state) => state.user,
+    isLogged: (state) => {
+      return state.user !== null
+    },
   },
   actions: {
     setUser(name) {

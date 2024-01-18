@@ -1,4 +1,5 @@
-
+import { useMainStore } from '~/store/main.js'
+const mainStore = useMainStore();
 
 // const isAuthenticated = () => {
 //   const auth = localStorage.getItem("user");
@@ -10,22 +11,37 @@
 //   }
 
 
-import { useMainStore } from '~/store/main.js'
-
-const mainStore = (useMainStore());
-
 export default defineNuxtRouteMiddleware(async (to, from) => {
+ 
+  // method 1
   // if (process.server) return
-  console.log('middleware start');
+  // const authenticated = localStorage.getItem('user')
 
-  // user wasnt updated before fetching from store, so we are using watch to load the function after it gets updated
+  // //  login path
+  // if (to.path === '/login') {
+  //   console.log('login path');
+  //   if (authenticated) {
+  //     return navigateTo('/');
+  //   }
+  //   // User is not authenticated, continue to login page
+  //   return;
+  // }
+
+  // if (!authenticated) {
+  //   alert("login first");
+  //   return navigateTo('/');
+  // }
+
+
+  // method 2
+ // user wasnt updated before fetching from store, so we are using watch to load the function after it gets updated
   watch(
     () => mainStore.user,
     () => {
       console.log('user changed', mainStore.user)
       console.log(mainStore.user)
       //  login path
-      if (to.path === '/login') {
+      if (to.path === '/login' || to.path === '/signup' ) {
         console.log('login path');
         if (mainStore.user) {
           return navigateTo('/');
@@ -41,8 +57,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     }
   )
 
-  //  login path
-  if (to.path === '/login') {
+  if (to.path === '/login' || to.path === '/signup') {
     console.log('login path');
     if (mainStore.user) {
       return navigateTo('/');

@@ -105,7 +105,7 @@ const handleSubmit = () => {
 .formContainer form input {
     margin-left: 10px;
     padding: 5px;
-
+    color: black;
 }
 
 .formContainer form input[type="submit"] {

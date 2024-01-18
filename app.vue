@@ -8,19 +8,20 @@ const { setUser } = mainStore;
 const router = useRouter();
 
 // Check login status when the component is mounted
-onMounted(async () => {
+onBeforeMount( () => {
     const auth = localStorage.getItem("user");
     // Check if auth is not null or undefined before setting the user
     if (auth !== null && auth !== undefined) {
-        await setUser(auth);
+         setUser(auth);
     }
     console.log(mainStore.user)
 });
 
 // handle logout
-const handleLogOut = async () => {
+const handleLogOut =  () => {
     localStorage.setItem("user", "");
-    await setUser(null)
+     setUser(null)
+     navigateTo('/login')
 }
 
 </script>

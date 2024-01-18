@@ -67,20 +67,6 @@ const getActiveButtonStyle = (text) => {
 </template>
 
 <style scoped>
-/* .submissionheader {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-} */
-
-/* .submissionheader div {
-    text-align: center;
-    background-color: rgba(164, 255, 60, 0.534);
-    flex-grow: 1;
-    padding: 10px;
-    cursor: pointer;
-} */
 
 .submissionheader div:first-child {
     border-right: 1px solid black;
@@ -113,4 +99,5 @@ thead {
 
 .data-table tbody tr:hover {
     background-color: #f5f5f5;
+    color: black;
 }</style>
