@@ -1,0 +1,21 @@
+{
+  "name": "Survey Form",
+  "input": [
+    {
+      "name": "Name",
+      "type": "text"
+    },
+    {
+      "name": "Address",
+      "type": "text"
+    },
+    {
+      "name": "Phone Number",
+      "type": "number"
+    },
+    {
+      "name": "Email",
+      "type": "email"
+    }
+  ]
+}

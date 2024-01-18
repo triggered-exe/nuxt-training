@@ -1,6 +1,7 @@
 <script setup>
 definePageMeta({
-  layout: 'marvel'
+  layout: 'marvel',
+  middleware: 'auth'
 })
 
 const searchText = ref('')

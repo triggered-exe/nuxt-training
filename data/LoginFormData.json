@@ -1,0 +1,14 @@
+{
+    "name": "Login Form",
+    "type": "login",
+    "input": [
+      {
+        "name": "Email",
+        "type": "email"
+      },
+      {
+        "name": "Password",
+        "type": "password"
+      }
+    ]
+  }

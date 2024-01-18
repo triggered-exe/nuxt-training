@@ -1,0 +1,25 @@
+{
+  "name": "Student Details Form",
+  "input": [
+    {
+      "name": "Name",
+      "type": "text"
+    },
+    {
+      "name": "School",
+      "type": "text"
+    },
+    {
+      "name": "RollNo",
+      "type": "number"
+    },
+    {
+      "name": "Class",
+      "type": "number"
+    },
+    {
+      "name": "Grade",
+      "type": "number"
+    }
+  ]
+}

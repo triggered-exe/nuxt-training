@@ -4,6 +4,10 @@ export default {
   theme: {
     extend: {},
   },
+  variants: {
+    extend: {
+      width: ['hover'],
+    },
+  },
   plugins: [],
-}
-
+};
