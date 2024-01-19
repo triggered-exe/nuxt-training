@@ -50,6 +50,9 @@ const handleSubmit = () => {
             localStorage.setItem("user", matchingUser.name)
             alert('Login successful');
             setUser(matchingUser.name);
+        //   setting the cookie
+            const accessToken = useCookie('accessToken')
+            accessToken.value = matchingUser.name;
             router.push('/')
         } else {
             alert('Invalid email or password');

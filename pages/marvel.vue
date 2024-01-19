@@ -4,6 +4,10 @@ definePageMeta({
   middleware: 'auth'
 })
 
+useSeoMeta({
+  title: 'Marvel Hunt',
+})
+
 const searchText = ref('')
 const handleSubmit = () => {
   if (!searchText.value || !isNaN(searchText.value)) {

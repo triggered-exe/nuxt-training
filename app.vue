@@ -5,7 +5,8 @@ const mainStore = useMainStore();
 
 const { setUser } = mainStore;
 
-const router = useRouter();
+const { $hello } = useNuxtApp();
+console.log($hello())
 
 // Check login status when the component is mounted
 onBeforeMount( () => {
@@ -21,9 +22,11 @@ onBeforeMount( () => {
 const handleLogOut =  () => {
     localStorage.setItem("user", "");
      setUser(null)
+    //  removing the cookie
+     const accessToken = useCookie('accessToken')
+    accessToken.value = undefined;
      navigateTo('/login')
 }
-
 </script>
 
 

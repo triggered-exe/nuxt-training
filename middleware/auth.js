@@ -11,9 +11,8 @@ const mainStore = useMainStore();
 //   }
 
 
-export default defineNuxtRouteMiddleware(async (to, from) => {
- 
-  // method 1
+// method 1
+// export default defineNuxtRouteMiddleware(async (to, from) => {
   // if (process.server) return
   // const authenticated = localStorage.getItem('user')
 
@@ -35,38 +34,59 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   // method 2
  // user wasnt updated before fetching from store, so we are using watch to load the function after it gets updated
-  watch(
-    () => mainStore.user,
-    () => {
-      console.log('user changed', mainStore.user)
-      console.log(mainStore.user)
-      //  login path
-      if (to.path === '/login' || to.path === '/signup' ) {
-        console.log('login path');
-        if (mainStore.user) {
-          return navigateTo('/');
-        }
-        // User is not authenticated, continue to login page
-        return;
-      }
+//  export default defineNuxtRouteMiddleware(async (to, from) => { 
+ // watch(
+  //   () => mainStore.user,
+  //   () => {
+  //     console.log('user changed', mainStore.user)
+  //     console.log(mainStore.user)
 
-      if (!mainStore.user) {
-        console.log("login first");
-        return navigateTo('/');
-      }
-    }
-  )
+  //     //  login path
+  //     if (to.path === '/login' || to.path === '/signup' ) {
+  //       console.log('login path');
+  //       if (mainStore.user) {
+  //         return navigateTo('/');
+  //       }
+  //       // User is not authenticated, continue to login page
+  //       return;
+  //     }
 
+  //     if (!mainStore.user) {
+  //       console.log("login first");
+  //       return navigateTo('/');
+  //     }
+  //   }
+  // )
+
+  // if (to.path === '/login' || to.path === '/signup') {
+  //   console.log('login path');
+  //   if (mainStore.user) {
+  //     return navigateTo('/');
+  //   }
+  //   // User is not authenticated, continue to login page
+  //   return;
+  // }
+
+  // if (!mainStore.user) {
+  //   console.log("login first");
+  //   alert('login first')
+  //   return navigateTo('/');
+  // }
+
+
+  // method 3  using cookies
+  export default defineNuxtRouteMiddleware(async (to, from) => {
+  const token = useCookie('accessToken')
+  console.log(token.value)
   if (to.path === '/login' || to.path === '/signup') {
     console.log('login path');
-    if (mainStore.user) {
+    if (token.value) {
       return navigateTo('/');
     }
     // User is not authenticated, continue to login page
     return;
   }
-
-  if (!mainStore.user) {
+  if (!token.value) {
     console.log("login first");
     alert('login first')
     return navigateTo('/');
