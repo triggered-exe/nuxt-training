@@ -1,7 +1,14 @@
 export default defineNuxtPlugin((nuxtApp) => {
     return  {
         provide: {
-            hello: () => 'My first plugin'
+            table: (n) => {
+                let result = [];
+                for(let i=1; i<=10; i++){
+                    result.push(n +' * ' + i + ' = ' + n*i)
+                }
+
+                return result;
+            }
         }
     }
 })  

@@ -5,9 +5,6 @@ const mainStore = useMainStore();
 
 const { setUser } = mainStore;
 
-const { $hello } = useNuxtApp();
-console.log($hello())
-
 // Check login status when the component is mounted
 onBeforeMount( () => {
     const auth = localStorage.getItem("user");

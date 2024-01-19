@@ -1,6 +1,26 @@
 import { useMainStore } from '~/store/main.js'
 const mainStore = useMainStore();
 
+// method 3  using cookies
+export default defineNuxtRouteMiddleware(async (to, from) => {
+const token = useCookie('accessToken')
+console.log(token.value)
+if (to.path === '/login' || to.path === '/signup') {
+  console.log('login path');
+  if (token.value) {
+    return navigateTo('/');
+  }
+  // User is not authenticated, continue to login page
+  return;
+}
+if (!token.value) {
+  console.log("login first");
+  alert('login first')
+  return navigateTo('/');
+}
+return;
+
+
 // const isAuthenticated = () => {
 //   const auth = localStorage.getItem("user");
 //     // Check if auth is not null or undefined before setting the user
@@ -74,22 +94,4 @@ const mainStore = useMainStore();
   // }
 
 
-  // method 3  using cookies
-  export default defineNuxtRouteMiddleware(async (to, from) => {
-  const token = useCookie('accessToken')
-  console.log(token.value)
-  if (to.path === '/login' || to.path === '/signup') {
-    console.log('login path');
-    if (token.value) {
-      return navigateTo('/');
-    }
-    // User is not authenticated, continue to login page
-    return;
-  }
-  if (!token.value) {
-    console.log("login first");
-    alert('login first')
-    return navigateTo('/');
-  }
-  return;
 });
