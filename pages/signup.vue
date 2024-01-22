@@ -24,7 +24,7 @@ if(props.user){
 <template>
      <Form :formData="formData" :user="props.user"/>
 
-     <div @click="$router.push('/login')">Already a user? try login</div>
+     <div class="text-white" @click="$router.push('/login')">Already a user? try login</div>
 </template>
 <style scoped>
 div {

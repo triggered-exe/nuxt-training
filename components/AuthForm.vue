@@ -66,7 +66,7 @@ const handleSubmit = () => {
 
 <template>
     <div class="formContainer text-white">
-        <h1>{{ formData.name }}</h1>
+        <h1 >{{ formData.name }}</h1>
 
         <form @submit.prevent="handleSubmit">
             <div v-for="input in formData.input">
@@ -85,12 +85,12 @@ const handleSubmit = () => {
 <style>
 .formContainer {
     width: 100vw;
+    margin-top: 50px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 20px;
-
+    gap: 10px;
 }
 
 .formContainer form {
@@ -99,14 +99,15 @@ const handleSubmit = () => {
     gap: 10px;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 20px;
     width: 25vmax;
-    border: 1px solid rgba(0, 0, 0, 0.322);
+    border: 2px solid rgba(255, 255, 255, 0.274);
     box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.39);
 }
 
 .formContainer form input {
     margin-left: 10px;
+    width: 90%;
     padding: 5px;
     color: black;
 }
