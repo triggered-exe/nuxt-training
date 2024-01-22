@@ -5,19 +5,15 @@ definePageMeta({
 })
 import { onMounted } from 'vue';
 
+const config = useRuntimeConfig()
 const loading = ref(false)
 const hero_data = ref([])
 const fav_data = ref([])
 
 const route = useRoute();
 const textSearched = route.params.text;
-const PUBLIC_KEY = "17276195778173eaec5692353710b8aa";
-// const PRIVATE_KEY = "41364c67101cfb1e1f3cb5f109b5e4a41c22d73f";
 const TIMESTAMP = 1;
-const HASH = "2dee9fdb14009b460952ba66887aa4f2";
-
-const url = `https://gateway.marvel.com/v1/public/characters?nameStartsWith=${textSearched}&apikey=${PUBLIC_KEY}&hash=${HASH}?ts=${TIMESTAMP}`
-
+const url = `https://gateway.marvel.com/v1/public/characters?nameStartsWith=${textSearched}&apikey=${config.public.PUBLIC_KEY}&hash=${config.public.HASH}?ts=${TIMESTAMP}`;
 
 onMounted(async () => {
     loading.value = true;

@@ -1,5 +1,5 @@
 <script setup>
-
+    
 const { $table } = useNuxtApp();
 console.log($table(5))
 
@@ -7,8 +7,8 @@ const number = ref(0);
 const tableData = ref('')
 const handleSubmit = () => {
 
-    if (number.value <= 0 || number.value > 100) {
-        alert('enter a value between 1 and 100')
+    if (number.value <= 0 || number.value > 1000) {
+        alert('enter a value between 1 and 1000')
         return;
     }
     tableData.value = $table(number.value)
@@ -25,7 +25,7 @@ const handleSubmit = () => {
             <button class="bg-purple-700 p-1.5" @click="handleSubmit">get table</button>
         </div>
 
-        <ul>
+        <ul class="px-3">
             <li v-for="data in tableData">{{ data }}</li>
         </ul>
     </div>

@@ -1,4 +1,5 @@
 <script setup>
+
 definePageMeta({
   layout: 'marvel',
   middleware: 'auth'
