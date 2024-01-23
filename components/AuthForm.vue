@@ -2,6 +2,9 @@
 import { useRouter } from 'vue-router'
 import { useMainStore } from '@/store/main'
 import { defineProps, defineEmits, ref } from 'vue';
+import database from '~/firebase';
+
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 const router = useRouter();
 
 // getting the main store data
@@ -9,7 +12,7 @@ const mainStore = useMainStore();
 const { user, setUser } = mainStore;
 
 const props = defineProps(['formData']);
-console.log(props.formData);
+// console.log(props.formData);
 const formData = props.formData;
 const emits = defineEmits(['setLoginEvent']);
 
@@ -28,35 +31,73 @@ const handleSubmit = () => {
             submittedData[input.name] = inputValues[input.name].value;
         });
 
+        const email = inputValues["Email"].value;
+        const password = inputValues["Password"].value;
+        const displayName = inputValues['name'].value;
+
+
+        const auth = getAuth();
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(async (userCredential) => {
+                // Signed up 
+                const user = userCredential.user;
+                await updateProfile(user, {
+                    displayName: displayName, 
+                });
+                router.push('/login')
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.error(errorMessage)
+                alert(errorMessage)
+            });
+
         // Save submitted data to Local Storage
-        const storedData = JSON.parse(localStorage.getItem("userData")) || [];
-        console.log(storedData)
-        storedData.push(submittedData);
-        localStorage.setItem("userData", JSON.stringify(storedData));
-        alert("signed up successfully")
-        console.log(submittedData);
-        router.push('/login')
-    }else {
-        console.log('EMAIL: '+ inputValues['Email'].value +'   pass: '+ inputValues['Password'].value)
-        const storedData = JSON.parse(localStorage.getItem("userData")) || [];
-        console.log(storedData)
+        // const storedData = JSON.parse(localStorage.getItem("userData")) || [];
+        // console.log(storedData)
+        // storedData.push(submittedData);
+        // localStorage.setItem("userData", JSON.stringify(storedData));
+        // alert("signed up successfully")
+        // console.log(submittedData);
+       
+    } else {
+        console.log('EMAIL: ' + inputValues['Email'].value + '   pass: ' + inputValues['Password'].value)
+        // const storedData = JSON.parse(localStorage.getItem("userData")) || [];
+        // console.log(storedData)
 
         const email = inputValues['Email'].value.trim();
         const password = inputValues['Password'].value.trim();
 
-        const matchingUser = storedData.find(user => user.Email === email);
+        const auth = getAuth();
 
-        if (matchingUser && matchingUser.Password === password) {
-            localStorage.setItem("user", matchingUser.name)
-            alert('Login successful');
-            setUser(matchingUser.name);
-        //   setting the cookie
-            const accessToken = useCookie('accessToken')
-            accessToken.value = matchingUser.name;
-            router.push('/')
-        } else {
-            alert('Invalid email or password');
-        }   
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                console.log(getAuth())
+                navigateTo('/')
+                alert('logged in successful')
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                alert(errorMessage)
+            });
+
+        // const matchingUser = storedData.find(user => user.Email === email);
+
+        // if (matchingUser && matchingUser.Password === password) {
+        //     localStorage.setItem("user", matchingUser.name)
+        //     alert('Login successful');
+        //     setUser(matchingUser.name);
+        //     //   setting the cookie
+        //     const accessToken = useCookie('accessToken')
+        //     accessToken.value = matchingUser.name;
+        //     router.push('/')
+        // } else {
+        //     alert('Invalid email or password');
+        // }
     }
 };
 
@@ -66,7 +107,7 @@ const handleSubmit = () => {
 
 <template>
     <div class="formContainer text-white">
-        <h1 >{{ formData.name }}</h1>
+        <h1>{{ formData.name }}</h1>
 
         <form @submit.prevent="handleSubmit">
             <div v-for="input in formData.input">

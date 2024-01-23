@@ -1,28 +1,50 @@
 <script setup >
+import database  from './firebase';
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useMainStore } from '~/store/main.js'
-
+// console.log('inside app.vue')
 const mainStore = useMainStore();
 
 const { setUser } = mainStore;
 
-// Check login status when the component is mounted
-onBeforeMount( () => {
-    const auth = localStorage.getItem("user");
-    // Check if auth is not null or undefined before setting the user
-    if (auth !== null && auth !== undefined) {
-         setUser(auth);
-    }
+definePageMeta({
+  middleware: 'auth'
+})
+
+
+// // Check login status when the component is mounted
+onBeforeMount( async () => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/auth.user
+    
+    console.log(user)
+    const uid = user.uid;
+    const email = user.email;
+    const name = user.providerData[0]?.displayName;
+    mainStore.user = {uid, name, email}
     console.log(mainStore.user)
+
+  } else {
+    console.log("no user")
+    mainStore.user = null
+  }
+});
+
 });
 
 // handle logout
-const handleLogOut =  () => {
-    localStorage.setItem("user", "");
-     setUser(null)
-    //  removing the cookie
-     const accessToken = useCookie('accessToken')
-    accessToken.value = undefined;
-     navigateTo('/login')
+const handleLogOut =  async() => {
+    const auth = getAuth();
+    try {
+      await signOut(auth);
+      mainStore.user = null;
+      return navigateTo('/login');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
 }
 </script>
 
