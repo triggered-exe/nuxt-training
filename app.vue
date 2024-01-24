@@ -1,39 +1,24 @@
 <script setup >
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useMainStore } from '~/store/main.js'
-// console.log('inside app.vue')
 const mainStore = useMainStore();
 
 // // Check login status when the component is mounted
 console.log('app.vue')
 onBeforeMount(async () => {
     const auth = getAuth();
-    // console.log("auth is: ", auth)
-    // console.log(auth.currentUser)
-    // if (auth.currentUser) {
-    //     const user = auth.currentUser;
-    //     mainStore.user = {
-    //         uid: user.uid,
-    //         displayName: user.displayName,
-    //         email: user.email,
-    //     };
-    //     console.log(mainStore.user)
-
-    // } 
     // firebase is asynchronous so use the onAuthStateChanged
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            console.log("user in app is: ", user)
             const { uid, displayName, email } = user;
 
-            let name = user.displayName;
-            console.log(uid, email, name)
+            let name = displayName;
+            // console.log(uid, email, name)    
             mainStore.user = { uid, name, email }
             const accessToken = useCookie('accessToken');
             accessToken.value = user.uid;
-            console.log("user inside store is: ", mainStore.user)
+            // console.log("user inside store is: ", mainStore.user)
         } else {
-            console.log("no user")
             mainStore.user = null
             const accessToken = useCookie('accessToken');
             accessToken.value = undefined;

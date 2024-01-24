@@ -7,6 +7,8 @@ definePageMeta({
     middleware: 'auth'
 });
 
+
+
 import { useMainStore } from '~/store/main.js';
 const mainStore = useMainStore();
 
@@ -93,7 +95,7 @@ const scrollToBottom = () => {
 
 <template>
     <div class="relative flex flex-col text-white max-w-[800px] w-[70vw] bg-purple-950 m-auto max-h-[500px] min-h-[500px]">
-        <h1 class="text-white-800 font-bold text-3xl text-center">chit chat</h1>
+        <h1 class="text-white-800 font-bold text-3xl text-center">Global Chat</h1>
         <hr />
         <div class="h-full flex-1 overflow-y-scroll py-2" ref="chatContainer">
             <div class="p-3 my-1" v-for="message in messages" :key="message.id"
@@ -110,4 +112,4 @@ const scrollToBottom = () => {
                 @click="sendMessage">Submit</button>
         </div>
     </div>
-</template>
+</template> 

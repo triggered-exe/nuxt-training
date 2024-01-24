@@ -1,7 +1,11 @@
 <script setup>
     
 const { $table } = useNuxtApp();
+
+console.log(useNuxtApp())
 console.log($table(5))
+
+console.log($table)
 
 const number = ref(0);
 const tableData = ref('')

@@ -37,7 +37,7 @@ const handleRemoveFromFav = (hero) => {
 
         <div v-else
             class="max-w-[900px] flex flex-wrap justify-around overflow-scroll overflow-x-hidden backdrop-blur-md ">
-            <div class="group font-serif relative m-5 border-2 border-rose-600  rounded-md  overflow-hidden w-40  shadow-lg bg-purple-500"
+            <div class="group font-serif relative m-5 border-2 border-rose-600  rounded-md  overflow-hidden w-40  shadow-lg bg-purple-500 max-h-[300px]"
                 v-for="hero in fav_data">
                 <div class="w-full">
                     <img class="w-full h-40 object-cover" :src="hero.thumbnail.path + '.' + hero.thumbnail.extension" />
