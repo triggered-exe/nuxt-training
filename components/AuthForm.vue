@@ -2,19 +2,17 @@
 import { useRouter } from 'vue-router'
 import { useMainStore } from '@/store/main'
 import { defineProps, defineEmits, ref } from 'vue';
-import database from '~/firebase';
+// import database from '~/firebase';
 
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 const router = useRouter();
 
 // getting the main store data
 const mainStore = useMainStore();
-const { user, setUser } = mainStore;
 
 const props = defineProps(['formData']);
 // console.log(props.formData);
 const formData = props.formData;
-const emits = defineEmits(['setLoginEvent']);
 
 // Create dynamic refs for input values
 const inputValues = {};
@@ -23,7 +21,9 @@ formData.input.forEach(input => {
 });
 
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
+
+    const auth = getAuth();
 
     if (formData.type === 'signup') {
         const submittedData = {};
@@ -31,36 +31,37 @@ const handleSubmit = () => {
             submittedData[input.name] = inputValues[input.name].value;
         });
 
-        const email = inputValues["Email"].value;
+        const emailInput = inputValues["Email"].value;
         const password = inputValues["Password"].value;
         const displayName = inputValues['name'].value;
 
+        console.log('handlign signup')
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, emailInput, password);
+            const user = userCredential.user;
+            console.log("user is: ", user);
 
-        const auth = getAuth();
-        createUserWithEmailAndPassword(auth, email, password)
-            .then(async (userCredential) => {
-                // Signed up 
-                const user = userCredential.user;
-                await updateProfile(user, {
-                    displayName: displayName, 
-                });
-                router.push('/login')
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.error(errorMessage)
-                alert(errorMessage)
+            await updateProfile(user, {
+                displayName: displayName,
             });
 
-        // Save submitted data to Local Storage
-        // const storedData = JSON.parse(localStorage.getItem("userData")) || [];
-        // console.log(storedData)
-        // storedData.push(submittedData);
-        // localStorage.setItem("userData", JSON.stringify(storedData));
-        // alert("signed up successfully")
-        // console.log(submittedData);
-       
+            console.log(user)
+            const { uid, displayName: userDisplayName, email } = user;
+
+            const name = userDisplayName;
+            // setting mainstore here because app.vue is getting called before the execution of this function and it doesnt get the displayName
+            mainStore.user = { uid, name, email };
+            console.log('updated user: ', user);
+            navigateTo('/');
+        } catch (error) {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.error(errorMessage);
+            alert(errorMessage);
+        }
+
+        console.log('end')
+
     } else {
         console.log('EMAIL: ' + inputValues['Email'].value + '   pass: ' + inputValues['Password'].value)
         // const storedData = JSON.parse(localStorage.getItem("userData")) || [];
@@ -69,41 +70,24 @@ const handleSubmit = () => {
         const email = inputValues['Email'].value.trim();
         const password = inputValues['Password'].value.trim();
 
-        const auth = getAuth();
-
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                // Signed in 
                 const user = userCredential.user;
-                console.log(getAuth())
-                navigateTo('/')
-                alert('logged in successful')
+
+                const accessToken = useCookie('accessToken');
+                accessToken.value = user.uid;
+
+                navigateTo('/');
+                alert('Logged in successfully');
             })
             .catch((error) => {
-                const errorCode = error.code;
                 const errorMessage = error.message;
-                alert(errorMessage)
+                alert(errorMessage);
             });
-
-        // const matchingUser = storedData.find(user => user.Email === email);
-
-        // if (matchingUser && matchingUser.Password === password) {
-        //     localStorage.setItem("user", matchingUser.name)
-        //     alert('Login successful');
-        //     setUser(matchingUser.name);
-        //     //   setting the cookie
-        //     const accessToken = useCookie('accessToken')
-        //     accessToken.value = matchingUser.name;
-        //     router.push('/')
-        // } else {
-        //     alert('Invalid email or password');
-        // }
     }
 };
 
 </script>
-
-
 
 <template>
     <div class="formContainer text-white">

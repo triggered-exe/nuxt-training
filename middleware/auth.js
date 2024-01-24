@@ -1,62 +1,96 @@
 import { useMainStore } from '~/store/main.js'
-import { getAuth, onAuthStateChanged} from "firebase/auth";
 
 const mainStore = useMainStore();
 
-
+// method 3  using cookies
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const auth = getAuth();
- const unsubscribe = onAuthStateChanged(auth, (user) => {
-  if (user) {
-    // User is signed in, see docs for a list of available properties
-    // https://firebase.google.com/docs/reference/js/auth.user
-    
-    
-    console.log("user is: ",user)
-    const uid = user.uid;
-    const email = user.email; 
-    const name = user.displayName;
-    mainStore.user = {uid, email}
-    if (to.path === '/login' || to.path === '/signup') {
-      console.log('login path');
-      if (auth) {
-        unsubscribe()
-        return navigateTo('/');
-      }
-    }
-  } else {
-    console.log("no user")
-    mainStore.user = null
-    if (to.path === '/login' || to.path === '/signup') {
-      console.log('login path');
-      unsubscribe()
-        return;
-    }
-    alert('login first')
-    unsubscribe()
+const token = useCookie('accessToken')
+console.log(token.value)
+if (to.path === '/login' || to.path === '/signup') {
+  console.log('login path');
+  if (token.value) {
     return navigateTo('/');
   }
-});
+  // User is not authenticated, continue to login page
+  return;
+}
+if (!token.value) {
+  console.log("login first");
+  alert('login first')
+  return navigateTo('/');
+}
+return;
 
 
-// method 3  using cookies
+
+
 // export default defineNuxtRouteMiddleware(async (to, from) => {
-// const token = useCookie('accessToken')
-// console.log(token.value)
-// if (to.path === '/login' || to.path === '/signup') {
-//   console.log('login path');
-//   if (token.value) {
+//   const auth = getAuth();
+//  const unsubscribe = onAuthStateChanged(auth, (user) => {
+//   if (user) {
+//     // User is signed in, see docs for a list of available properties
+//     // https://firebase.google.com/docs/reference/js/auth.user
+
+    
+//     console.log("user is: ",user)
+//     const uid = user.uid;
+//     const email = user.email; 
+//     const name = user.displayName;
+//     mainStore.user = {uid, email}
+//     if (to.path === '/login' || to.path === '/signup') {
+//       console.log('login path');
+//       if (auth) {
+//         unsubscribe()
+//         return navigateTo('/');
+//       }
+//     }
+//   } else {
+//     console.log("no user")
+//     mainStore.user = null
+//     if (to.path === '/login' || to.path === '/signup') {
+//       console.log('login path');
+//       unsubscribe()
+//         return;
+//     }
+//     alert('login first')
+//     unsubscribe()
+//     return navigateTo('/');
+//   }export default defineNuxtRouteMiddleware(async (to, from) => {
+//   const auth = getAuth();
+//  const unsubscribe = onAuthStateChanged(auth, (user) => {
+//   if (user) {
+//     // User is signed in, see docs for a list of available properties
+//     // https://firebase.google.com/docs/reference/js/auth.user
+
+    
+//     console.log("user is: ",user)
+//     const uid = user.uid;
+//     const email = user.email; 
+//     const name = user.displayName;
+//     mainStore.user = {uid, email}
+//     if (to.path === '/login' || to.path === '/signup') {
+//       console.log('login path');
+//       if (auth) {
+//         unsubscribe()
+//         return navigateTo('/');
+//       }
+//     }
+//   } else {
+//     console.log("no user")
+//     mainStore.user = null
+//     if (to.path === '/login' || to.path === '/signup') {
+//       console.log('login path');
+//       unsubscribe()
+//         return;
+//     }
+//     alert('login first')
+//     unsubscribe()
 //     return navigateTo('/');
 //   }
-//   // User is not authenticated, continue to login page
-//   return;
-// }
-// if (!token.value) {
-//   console.log("login first");
-//   alert('login first')
-//   return navigateTo('/');
-// }
-// return;
+// });
+// });
+
+
 
 
 // const isAuthenticated = () => {
@@ -133,6 +167,3 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
 
 });
-definePageMeta({
-  middleware: 'auth'
-})
