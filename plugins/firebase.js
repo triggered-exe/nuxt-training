@@ -5,17 +5,16 @@ import { getFirestore } from 'firebase/firestore';
 export default defineNuxtPlugin((nuxtApp) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const config = useRuntimeConfig();
-
   
   const firebaseConfig = {
-    apiKey: "AIzaSyCF_7Av-InygtisElUjuo_92v7IrLpbOfU",
-    authDomain: "vue-chat-fa17e.firebaseapp.com",
-    projectId: "vue-chat-fa17e",
-    storageBucket: "vue-chat-fa17e.appspot.com",
-    messagingSenderId: "293445729550",
-    appId: "1:293445729550:web:bf14b30e25ce149d6aab5f"
+    apiKey: config.public.FB_API_KEY,
+    authDomain: config.public.FB_AUTH_DOMAIN,
+    projectId: config.public.FB_PROJECT_ID,
+    storageBucket: config.public.FB_STORAGE_BUCKET,
+    messagingSenderId: config.public.FB_MESSAGING_SENDER_ID,
+    appId: config.public.FB_APP_ID,
   };
-
+  
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const database = getFirestore(app);
