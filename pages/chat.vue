@@ -1,7 +1,9 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { collection, onSnapshot, addDoc, query, orderBy, limit } from 'firebase/firestore';
-import database from '~/firebase';
+
+const { $database } = useNuxtApp();
+const database = $database;
 
 definePageMeta({
     middleware: 'auth'

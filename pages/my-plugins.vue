@@ -1,6 +1,6 @@
 <script setup>
     
-const { $table } = useNuxtApp();
+
 
 console.log(useNuxtApp())
 console.log($table(5))
