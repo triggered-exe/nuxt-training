@@ -23,15 +23,6 @@ const searchQuery = ref()
 const currentlyOpenedChat = ref(null)
 const users = ref([]);
 const chatUsers = ref([]); // To store users with whom the current user has chatted
-// console.log("server: ", mainStore.user)
-
-// if (process.client) {
-//     console.log(mainStore.user)
-// }
-// if (process.server) {
-//     console.log("server: ", mainStore.user)
-// }
-
 let messageReceivedAudio = '';
 
 const sendMessage = async () => {
@@ -71,7 +62,15 @@ const sendMessage = async () => {
 // load the users at th initial load for search functionality
 const fetchAllUsers = async () => {
     const usersCollection = collection(database, 'users');
-    const usersQuery = query(usersCollection, limit(1000));
+    const usersQuery = query(usersCollection// console.log("server: ", mainStore.user)
+
+// if (process.client) {
+//     console.log(mainStore.user)
+// }
+// if (process.server) {
+//     console.log("server: ", mainStore.user)
+// }
+, limit(1000));
     try {
         const userSnapshot = await getDocs(usersQuery);
         userSnapshot.docs.map((doc) => {
@@ -105,9 +104,6 @@ const fetchChatUsers = async () => {
             const userDetails2 = users.value.find(user => user.id === user2);
 
             console.log('fetching chat users: ', doc.data())
-            // console.log(user1, user2)
-            // console.log(userDetails1, userDetails2)
-            // Ensure that the current user is not included in the result
             if (user1 === mainStore.user.id && !chatUsers.value.includes(userDetails2)) {
                 chatUsers.value.unshift(userDetails2);
             } else if (user2 === mainStore.user.id && !chatUsers.value.includes(userDetails1)) {
@@ -135,6 +131,9 @@ const fetchChatUsers = async () => {
     }
 };
 
+
+
+
 const handleOpenChat = async (user) => {
     const currentUserUid = mainStore.user.uid;
     const otherUserId = user.id;
@@ -145,8 +144,6 @@ const handleOpenChat = async (user) => {
         chatsCollection,
         where('usersId', 'in', [currentUserUid + otherUserId, otherUserId + currentUserUid])
     );
-
-
     try {
         const chatSnapshot = await getDocs(chatQuery);
 
@@ -182,6 +179,7 @@ const handleOpenChat = async (user) => {
     }
 };
 
+
 // Function to start listening to messages in the currently opened chat
 const startListeningToMessages = (id) => {
     try {
@@ -211,43 +209,8 @@ const startListeningToMessages = (id) => {
 };
 
 
-// const fetchMessages = async () => {
-//     const messagesCollection = collection(database, `messages.${mainStore.user.uid}.${selectedUser.value}`);
-//     const querySnapshot = query(
-//         messagesCollection,
-//         orderBy('timestamp', 'asc'),
-//         limit(50)
-//     );
 
-//     onSnapshot(querySnapshot, (snapshot) => {
-//         const updatedMessages = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-//         if (
-//             messages.value.length > 0 &&
-//             updatedMessages.length > messages.value.length &&
-//             updatedMessages[updatedMessages.length - 1].uid !== mainStore.user.uid
-//         ) {
-//             messageReceivedAudio.play();
-//         }
-//         messages.value = updatedMessages;
-
-//         scrollToBottom();
-//     });
-// };
-
-// const newChatDoc = await addDoc(chatsCollection, {
-//     users: `${currentUserUid}|${otherUserId}`,
-//     messages: []
-//     // Add any additional fields or data for the new chat
-// });
-
-// console.log('New chat created:', newChatDoc.id);
-
-// // Assign the currently opened chat
-// currentlyOpenedChat.value = newChatDoc.ref;
-
-// // Start listening to messages in this chat
-// startListeningToMessages(newChatDoc.ref);
-const searchUsersByName = async (searchQuery) => {        // const newChatDoc = await addDoc(chatsCollection, {
+const searchUsersByName = async (searchQuery) => { 
     try {
         // Assuming you have a ref named 'users' that contains all user details
         const filteredUsers = users.value.filter(user => {
@@ -265,41 +228,17 @@ const searchUsersByName = async (searchQuery) => {        // const newChatDoc = 
 };
 
 
-
-
-watch(() => [messages, selectedUser], () => {        // const newChatDoc = await addDoc(chatsCollection, {
-    //     users: `${currentUserUid}|${otherUserId}`,
-    //     messages: []
-    //     // Add any additional fields or data for the new chat
-    // });
-
-    // console.log('New chat created:', newChatDoc.id);
-
-    // // Assign the currently opened chat
-    // currentlyOpenedChat.value = newChatDoc.ref;
-
-    // // Start listening to messages in this chat
-    // startListeningToMessages(newChatDoc.ref);
+watch(() => [messages, selectedUser], () => { 
     scrollToBottom();
 });
 
-// watchEffect(async() => {
-//     console.log('User changed:',mainStore.user?.uid );
-//     if (mainStore.user?.uid && users.value.length === 0) {
-//         await fetchAllUsers();
-//         await fetchChatUsers();
-//     }
-//     // const searchQuery = 'hari'; // Replace with your actual search query
-//     // searchUsersByName(searchQuery);
-// });
+
 watch(() => mainStore.user, async (newUser, oldUser) => {
     console.log('User changed:', newUser.uid, newUser.uid);
     if (!oldUser?.uid || (oldUser.uid !== newUser.uid)) {
         await fetchAllUsers();
         await fetchChatUsers();
     }
-    // const searchQuery = 'hari'; // Replace with your actual search query
-    // searchUsersByName(searchQuery);
 });
 
 onBeforeMount(async () => {
@@ -312,16 +251,6 @@ onBeforeMount(async () => {
 onMounted(() => {
     // Create an audio element
     messageReceivedAudio = new Audio("/incoming-noti.mp3");
-
-    // Wait for the audio to be loaded
-    messageReceivedAudio.addEventListener('loadeddata', () => {
-        console.log('Audio loaded');
-    });
-
-    // Log any error during audio loading
-    messageReceivedAudio.addEventListener('error', (error) => {
-        console.error('Error loading audio:', error);
-    });
 });
 
 
@@ -332,6 +261,7 @@ const scrollToBottom = () => {
         }
     });
 };
+
 </script>
 
 
