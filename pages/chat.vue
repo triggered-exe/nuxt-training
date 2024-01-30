@@ -354,7 +354,8 @@ const scrollToBottom = () => {
         </div>
 
         <div class="grow relative flex flex-col text-white m-auto h-full">
-            <h1 class="text-white-800 font-bold text-3xl text-center">Chat with {{ selectedUser?.displayName }}</h1>
+            <h1 v-if="selectedUser?.displayName" class="text-white-800 font-bold text-3xl text-center">Chat with {{ selectedUser?.displayName }}</h1>
+            <h1 v-else class="text-white-800 font-bold text-3xl text-center">chit chat</h1>
             <hr />
             <div v-if="messages === null" class="relative font-bold text-lg m-auto top-[45%]"> Select a user to start
                 chatting </div>
