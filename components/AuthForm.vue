@@ -5,6 +5,12 @@ import { defineProps, defineEmits, ref } from 'vue';
 // import database from '~/firebase';
 
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { collection, doc, setDoc } from "firebase/firestore";
+
+const { $database, $auth } = useNuxtApp();
+
+const database = $database;
+
 const router = useRouter();
 
 // getting the main store data
@@ -34,9 +40,9 @@ const handleSubmit = async () => {
         const emailInput = inputValues["Email"].value;
         const password = inputValues["Password"].value;
         const displayName = inputValues['name'].value;
-
         console.log('handlign signup')
         try {
+            // Step 1: Create user in Firebase Authentication
             const userCredential = await createUserWithEmailAndPassword(auth, emailInput, password);
             const user = userCredential.user;
             console.log("user is: ", user);
@@ -46,7 +52,16 @@ const handleSubmit = async () => {
             });
 
             console.log(user)
-            const { uid, displayName: userDisplayName, email } = user;
+            const { uid, displayName: userDisplayName, email } = user;  
+
+            // Step 2: Update Firestore document with user data
+            const usersCollectionRef = collection(database, 'users');
+            const userDocRef = doc(usersCollectionRef, user.uid);
+
+            await setDoc(userDocRef, {
+                displayName: displayName,
+                email: email,
+            });
 
             const name = userDisplayName;
             // setting mainstore here because app.vue is getting called before the execution of this function and it doesnt get the displayName
@@ -73,7 +88,11 @@ const handleSubmit = async () => {
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
+                const { uid, displayName: userDisplayName, email } = user;
 
+                const name = userDisplayName;
+                // setting mainstore here because app.vue is getting called before the execution of this function and it doesnt get the displayName
+                mainStore.user = { uid, name, email };
                 const accessToken = useCookie('accessToken');
                 accessToken.value = user.uid;
 

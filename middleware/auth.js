@@ -1,6 +1,3 @@
-import { useMainStore } from '~/store/main.js'
-
-const mainStore = useMainStore();
 
 // method 3  using cookies
 export default defineNuxtRouteMiddleware(async (to, from) => {

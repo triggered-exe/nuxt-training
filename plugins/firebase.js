@@ -1,8 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-
-export default defineNuxtPlugin((nuxtApp) => {
+console.log('inside firebase plugin')
+export default defineNuxtPlugin(async (nuxtApp) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const config = useRuntimeConfig();
   
@@ -16,7 +16,8 @@ export default defineNuxtPlugin((nuxtApp) => {
   };
   
   const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+  const auth = getAuth();
+  console.log('auth is: ',auth)
   const database = getFirestore(app);
 
   nuxtApp.vueApp.provide('auth', auth);

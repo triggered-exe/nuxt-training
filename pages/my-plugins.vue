@@ -1,11 +1,7 @@
 <script setup>
     
 
-
-console.log(useNuxtApp())
-console.log($table(5))
-
-console.log($table)
+const { $table } = useNuxtApp();
 
 const number = ref(0);
 const tableData = ref('')
@@ -16,7 +12,6 @@ const handleSubmit = () => {
         return;
     }
     tableData.value = $table(number.value)
-    console.log(tableData.value)
 }
 </script>
 
