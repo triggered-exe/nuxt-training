@@ -267,7 +267,7 @@ const scrollToBottom = () => {
 
 <template>
     <div class="w-screen flex h-[95vh] bg-purple-950">
-        <div class="w-[300px] border-r-2">
+        <div class="min-w-[300px] border-r-2">
             <div class="w-full">
                 <input class="w-full p-1" type="text" placeholder="Search user" v-model="searchQuery">
             </div>
@@ -290,7 +290,7 @@ const scrollToBottom = () => {
             <div v-if="messages === null" class="relative font-bold text-lg m-auto top-[45%]"> Select a user to start
                 chatting </div>
 
-            <div class="relative h-full w-full flex flex-col">
+            <div class="relative h-full w-full flex flex-col max-h-[96%]">
                 <div class="relative grow overflow-y-scroll py-2" ref="chatContainer">
                     <div v-if="messages?.length === 0"
                         class="relative font-bold text-lg flex items-center justify-center h-full">
