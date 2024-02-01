@@ -138,7 +138,7 @@ const handleOpenChat = async (user) => {
     try {
         const chatSnapshot = await getDocs(chatQuery);
 
-        if (!chatSnapshot.empty) {
+        if(!chatSnapshot.empty) {
                 const chatDoc = chatSnapshot.docs[0];
             console.log('Chat found:', chatDoc.data());
 
@@ -152,9 +152,8 @@ const handleOpenChat = async (user) => {
             console.log('No chat found between the users.');
             const newChatDoc = await addDoc(chatsCollection, {
                 usersId: currentUserUid + otherUserId,
-                users:t  [currentUserUid, otherUserId],
+                users: [currentUserUid, otherUserId],
                 messages: []
-                // Add any additional fields or data for the new chat
             });
 
             console.log('New chat created:', newChatDoc.id);
