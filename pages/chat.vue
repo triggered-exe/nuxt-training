@@ -19,7 +19,7 @@ const newMessage = ref([]);
 const chatContainer = ref(null);
 const selectedUser = ref(null);
 const showSearchResultModal = ref(false)
-const searchQuery = ref()
+const searchQuery = ref('')
 const searchResults = ref([])
 const currentlyOpenedChat = ref(null)
 const users = ref([]);
@@ -54,7 +54,7 @@ const sendMessage = async () => {
         // Clear the input field
         newMessage.value = '';
     } catch (error) {
-        console.error('Error sending message:', error);
+        console.error('Error sending message:', error);searchQuery
     }
 };
 
@@ -71,13 +71,14 @@ const fetchAllUsers = async () => {
             if (doc.id !== mainStore.user.uid) {
                 //    return { id: doc.id, ...doc.data() }; 
                 users.value.push({ id: doc.id, ...doc.data() })
+
             }
         })
         // console.log('all users are: ', users.value)
     } catch (error) {
         auth
         console.log('error fetching users: ', error)
-    }
+    }searchQuery
 }
 
 // fetch the users with whom the logged user has already chat
@@ -117,7 +118,7 @@ const fetchChatUsers = async () => {
             }
         }
         // console.log('Users with whom mainStore.user has chatted:', chatUsers.value);
-    } catch (error) {
+    } catch (error) {searchQuery    
         console.error('Error fetching chat users:', error);
     }
 };
@@ -138,7 +139,7 @@ const handleOpenChat = async (user) => {
         const chatSnapshot = await getDocs(chatQuery);
 
         if (!chatSnapshot.empty) {
-            const chatDoc = chatSnapshot.docs[0];
+                const chatDoc = chatSnapshot.docs[0];
             console.log('Chat found:', chatDoc.data());
 
             // Assign the currently opened chat
@@ -151,7 +152,7 @@ const handleOpenChat = async (user) => {
             console.log('No chat found between the users.');
             const newChatDoc = await addDoc(chatsCollection, {
                 usersId: currentUserUid + otherUserId,
-                users: [currentUserUid, otherUserId],
+                users:t  [currentUserUid, otherUserId],
                 messages: []
                 // Add any additional fields or data for the new chat
             });
@@ -222,7 +223,7 @@ const searchUsersByName = async (searchQuery) => {
 
 // handle search modal
 const handleSearchModalClick = (user) => {
-    // add to the chatUser if not already added
+    // add to the chatUser if not already addedsearchQuery
     const isPresent = chatUsers.value.filter(data => {
         return data.id === user.id
     })
@@ -249,10 +250,14 @@ watch(() => [messages, selectedUser], () => {
 
 
 // watch the changes to the search query
-watch(searchQuery, async (newValue) => {
-    searchResults.value = await searchUsersByName(newValue);
-    // console.log(searchResults.value);
-});
+    // watch(searchQuery, async (newValue) => {
+    
+    //     // console.log(searchResults.value);
+    // });
+
+watchEffect(async()=>{
+     searchResults.value = await searchUsersByName(searchQuery.value);
+})
 
 
 // watcher because the auth is async nature in firebase
