@@ -294,12 +294,15 @@ const scrollToBottom = () => {
     <div class="w-screen flex h-[95vh] bg-purple-950">
         <div class="min-w-[300px] border-r-2">
             <div class="w-full">
-                <input class="w-full p-1" type="text" placeholder="Search user" v-model="searchQuery"
+                <input class="w-full p-1 text-center" type="text" placeholder="Search user" v-model="searchQuery"
                     @click.stop="toggleSearchResultModal">
             </div>
+            <Transition>
             <SearchResult v-if="showSearchResultModal" :users="searchResults"
                 :handleSearchModalClick="handleSearchModalClick" />
-            <div v-else class="w-full  ">
+            </Transition>
+
+            <div v-if="!showSearchResultModal" class="w-full">
                 <ul class="m-1 text-white overflow-y-scroll h-full">
                     <li class="flex gap-2 itemsendMessages-center cursor-pointer borderchatUsers-b-[1px] p-2"
                         @click="handleOpenChat(user)" v-for="user in chatUsers" :key="user">
@@ -343,3 +346,17 @@ const scrollToBottom = () => {
         </div>
     </div>
 </template>
+
+
+
+<style>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>
