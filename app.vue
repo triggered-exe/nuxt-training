@@ -10,8 +10,8 @@
         if(process.server) return;
         const auth = $auth;
         mainStore.user = auth.currentUser;
-        console.log('mainstore user is : ', mainStore.user)
-        console.log("logged user: ",auth.currentUser)
+        // console.log('mainstore user is : ', mainStore.user)
+        // console.log("logged user: ",auth.currentUser)
         // firebase is asynchronous so use the onAuthStateChanged
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -22,7 +22,7 @@
                 mainStore.user = { uid, name, email }
                 const accessToken = useCookie('accessToken');
                 accessToken.value = user.uid;
-                console.log("user inside store is: ", mainStore.user)
+                // console.log("user inside store is: ", mainStore.user)
             } else {
                 mainStore.user = null
                 const accessToken = useCookie('accessToken');

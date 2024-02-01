@@ -2,6 +2,7 @@
 import { ref, onMounted, watch, nextTick } from 'vue';
 import { collection, doc, onSnapshot, addDoc, getDocs, query, orderBy, limit, where } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { useMainStore } from '~/store/main.js';
 
 const { $database } = useNuxtApp();
 // console.log($auth)
@@ -12,24 +13,24 @@ definePageMeta({
     middleware: 'auth'
 });
 
-import { useMainStore } from '~/store/main.js';
 const mainStore = useMainStore();
-
 const messages = ref(null);
 const newMessage = ref([]);
 const chatContainer = ref(null);
 const selectedUser = ref(null);
+const showSearchResultModal = ref(false)
 const searchQuery = ref()
+const searchResults = ref([])
 const currentlyOpenedChat = ref(null)
 const users = ref([]);
 const chatUsers = ref([]); // To store users with whom the current user has chatted
 let messageReceivedAudio = '';
 
+// function to send the message
 const sendMessage = async () => {
     try {
         // Destructure properties from mainStore.user
         const { name, uid } = mainStore.user;
-
         // Check if newMessage and selectedUser are present
         if (!newMessage.value || !selectedUser.value) {
             console.log(newMessage.value, selectedUser.value)
@@ -46,10 +47,10 @@ const sendMessage = async () => {
         };
 
         // Add the new message to the Firestore collection within the specific chat document
-        const chatId = currentlyOpenedChat.value.id; // Assuming currentlyOpenedChat is a ref to the chat document
+        const chatId = currentlyOpenedChat.value; // Assuming currentlyOpenedChat is a ref to the chat document
         const messagesCollection = collection(database, `chats/${chatId}/messages`);
         await addDoc(messagesCollection, messageData);
-
+        console.log("inside send message selectedUser.value: ",selectedUser.value)  
         // Clear the input field
         newMessage.value = '';
     } catch (error) {
@@ -62,15 +63,7 @@ const sendMessage = async () => {
 // load the users at th initial load for search functionality
 const fetchAllUsers = async () => {
     const usersCollection = collection(database, 'users');
-    const usersQuery = query(usersCollection// console.log("server: ", mainStore.user)
-
-// if (process.client) {
-//     console.log(mainStore.user)
-// }
-// if (process.server) {
-//     console.log("server: ", mainStore.user)
-// }
-, limit(1000));
+    const usersQuery = query(usersCollection, limit(1000));
     try {
         const userSnapshot = await getDocs(usersQuery);
         userSnapshot.docs.map((doc) => {
@@ -80,14 +73,14 @@ const fetchAllUsers = async () => {
                 users.value.push({ id: doc.id, ...doc.data() })
             }
         })
-        console.log('all users are: ', users.value)
+        // console.log('all users are: ', users.value)
     } catch (error) {
         auth
         console.log('error fetching users: ', error)
     }
 }
 
-
+// fetch the users with whom the logged user has already chat
 const fetchChatUsers = async () => {
     const chatsCollection = collection(database, 'chats');
     const chatsQuery = query(chatsCollection);
@@ -98,48 +91,45 @@ const fetchChatUsers = async () => {
         chatsSnapshot.docs.forEach(doc => {
             const user1 = doc.data().users[0];
             const user2 = doc.data().users[1];
-
-            // Find user details from the 'user, $auth s' array
-            const userDetails1 = users.value.find(user => user.id === user1);
-            const userDetails2 = users.value.find(user => user.id === user2);
-
-            console.log('fetching chat users: ', doc.data())
-            if (user1 === mainStore.user.id && !chatUsers.value.includes(userDetails2)) {
-                chatUsers.value.unshift(userDetails2);
-            } else if (user2 === mainStore.user.id && !chatUsers.value.includes(userDetails1)) {
-                chatUsers.value.unshift(userDetails1);
+            if (user1 === mainStore.user.uid) {
+                // console.log('checking user1')
+                const userDetails2 = users.value.find(user => user.id === user2);
+                chatUsers.value.push(userDetails2);
+                // console.log(userDetails2.displayName)
+            } else if (user2 === mainStore.user.uid) {
+                // console.log('checking user2')
+                const userDetails1 = users.value.find(user => user.id === user1);
+                chatUsers.value.push(userDetails1);
+                // console.log(user1)
             }
         });
 
+        // console.log(chatUsers.value)
         if (chatUsers.value.length < 5) {
-            console.log('------------')
-            console.log(users.value)
-            console.log(chatUsers.value)
             let i = 0;
-            while (chatUsers.value.length < 10 && i < users.value.length) {
-                console.log('inside loop')
+            while (chatUsers.value.length < 5 && i < users.value.length) {
+                // console.log('inside loop')
                 if (!chatUsers.value.includes(users.value[i]) && users.value[i].id !== mainStore.user.uid) {
-                    console.log(mainStore.user.uid, '     ', users.value[i].id)
+                    // console.log(mainStore.user.uid, '     ', users.value[i].id)
                     chatUsers.value.push(users.value[i]);
                 }
                 i++;
             }
         }
-        console.log('Users with whom mainStore.user has chatted:', chatUsers.value);
+        // console.log('Users with whom mainStore.user has chatted:', chatUsers.value);
     } catch (error) {
         console.error('Error fetching chat users:', error);
     }
 };
 
 
-
-
+// functon to open the chat in the chat container
 const handleOpenChat = async (user) => {
     const currentUserUid = mainStore.user.uid;
     const otherUserId = user.id;
     const chatsCollection = collection(database, 'chats');
     selectedUser.value = user;
-    
+
     const chatQuery = query(
         chatsCollection,
         where('usersId', 'in', [currentUserUid + otherUserId, otherUserId + currentUserUid])
@@ -152,9 +142,9 @@ const handleOpenChat = async (user) => {
             console.log('Chat found:', chatDoc.data());
 
             // Assign the currently opened chat
-            currentlyOpenedChat.value = chatDoc.ref;
+            currentlyOpenedChat.value = chatDoc.id;
             console.log(chatDoc.ref)
-
+            console.log('currentlyOpenedChat.value : ', currentlyOpenedChat.value)
             // Start listening to messages in this chat
             startListeningToMessages(chatDoc.id);
         } else {
@@ -169,11 +159,13 @@ const handleOpenChat = async (user) => {
             console.log('New chat created:', newChatDoc.id);
 
             // Assign the currently opened chat
-            currentlyOpenedChat.value = newChatDoc.ref;
-
+            currentlyOpenedChat.value = newChatDoc.id;
+            // console.log('currentlyOpenedChat.value : ', currentlyOpenedChat.value)
+            // console.log('selectedUser', newChatDoc.id)
             // Start listening to messages in this chat
-            startListeningToMessages(newChatDoc.id);messageReceivedAudio
+            startListeningToMessages(newChatDoc.id);
         }
+
     } catch (error) {
         console.error('Error finding chat:', error);
     }
@@ -200,7 +192,7 @@ const startListeningToMessages = (id) => {
                 console.log('playing audio')
                 messageReceivedAudio.play();
             }
-            console.log(updatedMessages)
+            // console.log(updatedMessages)
         });
     } catch (error) {
         console.log(error)
@@ -209,8 +201,8 @@ const startListeningToMessages = (id) => {
 };
 
 
-
-const searchUsersByName = async (searchQuery) => { 
+// function to search the users array based on the search query
+const searchUsersByName = async (searchQuery) => {
     try {
         // Assuming you have a ref named 'users' that contains all user details
         const filteredUsers = users.value.filter(user => {
@@ -228,32 +220,60 @@ const searchUsersByName = async (searchQuery) => {
 };
 
 
-watch(() => [messages, selectedUser], () => { 
+// handle search modal
+const handleSearchModalClick = (user) => {
+    // add to the chatUser if not already added
+    const isPresent = chatUsers.value.filter(data => {
+        return data.id === user.id
+    })
+    if (!isPresent) {
+        chatUsers.value.unshift(user)
+    }
+    // add to selected user
+    // selectedUser.value = user;
+    console.log("selected user is",selectedUser.value)
+    handleOpenChat(user)
+    toggleSearchResultModal()
+}
+
+// function to toggle the  modal
+const toggleSearchResultModal = () => {
+    showSearchResultModal.value = !showSearchResultModal.value;
+};
+
+
+// watcher to scroll down to the bottom of the chat container
+watch(() => [messages, selectedUser], () => {
     scrollToBottom();
 });
 
 
+// watch the changes to the search query
+watch(searchQuery, async (newValue) => {
+    searchResults.value = await searchUsersByName(newValue);
+    // console.log(searchResults.value);
+});
+
+
+// watcher because the auth is async nature in firebase
 watch(() => mainStore.user, async (newUser, oldUser) => {
-    console.log('User changed:', newUser.uid, newUser.uid);
+    // console.log('User changed:', newUser.uid, newUser.uid);
+    // preventing the scenarion when user might change multiple times
     if (!oldUser?.uid || (oldUser.uid !== newUser.uid)) {
         await fetchAllUsers();
         await fetchChatUsers();
     }
 });
 
-onBeforeMount(async () => {
-    if (mainStore.user?.uid) {
-        await fetchAllUsers();
-        await fetchChatUsers();
-    }
-})
 
+
+// since audio is not available on the client side we use it after mounting
 onMounted(() => {
     // Create an audio element
     messageReceivedAudio = new Audio("/incoming-noti.mp3");
 });
 
-
+// function to scroll to botttom
 const scrollToBottom = () => {
     nextTick(() => {
         if (chatContainer.value) {
@@ -269,10 +289,13 @@ const scrollToBottom = () => {
     <div class="w-screen flex h-[95vh] bg-purple-950">
         <div class="min-w-[300px] border-r-2">
             <div class="w-full">
-                <input class="w-full p-1" type="text" placeholder="Search user" v-model="searchQuery">
+                <input class="w-full p-1" type="text" placeholder="Search user" v-model="searchQuery"
+                    @click.stop="toggleSearchResultModal">
             </div>
-            <div class="w-full ">
-                <ul class="m-1 text-white">
+            <SearchResult v-if="showSearchResultModal" :users="searchResults"
+                :handleSearchModalClick="handleSearchModalClick" />
+            <div v-else class="w-full  ">
+                <ul class="m-1 text-white overflow-y-scroll h-full">
                     <li class="flex gap-2 itemsendMessages-center cursor-pointer borderchatUsers-b-[1px] p-2"
                         @click="handleOpenChat(user)" v-for="user in chatUsers" :key="user">
                         <img class="w-[20px] h-[20px] rounded-full" :src="`/profile-logo.jpg`" alt="Profile Image" />
@@ -280,11 +303,11 @@ const scrollToBottom = () => {
                     </li>
                 </ul>
             </div>
-
         </div>
 
         <div class="grow relative flex flex-col text-white m-auto h-full">
-            <h1 v-if="selectedUser?.displayName" class="text-white-800 font-bold text-3xl text-center">Chat with {{ selectedUser?.displayName }}</h1>
+            <h1 v-if="selectedUser?.displayName" class="text-white-800 font-bold text-3xl text-center">Chat with {{
+                selectedUser?.displayName }}</h1>
             <h1 v-else class="text-white-800 font-bold text-3xl text-center">chit chat</h1>
             <hr />
             <div v-if="messages === null" class="relative font-bold text-lg m-auto top-[45%]"> Select a user to start
