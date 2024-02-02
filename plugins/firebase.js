@@ -1,7 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-console.log('inside firebase plugin')
 export default defineNuxtPlugin(async (nuxtApp) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const config = useRuntimeConfig();

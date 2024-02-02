@@ -144,8 +144,8 @@ const handleOpenChat = async (user) => {
 
             // Assign the currently opened chat
             currentlyOpenedChat.value = chatDoc.id;
-            console.log(chatDoc.ref)
-            console.log('currentlyOpenedChat.value : ', currentlyOpenedChat.value)
+            // console.log(chatDoc.ref)
+            // console.log('currentlyOpenedChat.value : ', currentlyOpenedChat.value)
             // Start listening to messages in this chat
             startListeningToMessages(chatDoc.id);
         } else {
@@ -175,7 +175,7 @@ const handleOpenChat = async (user) => {
 // Function to start listening to messages in the currently opened chat
 const startListeningToMessages = (id) => {
     try {
-        console.log(id)
+        // console.log(id)
         const messagesCollection = collection(database, `chats/${id}/messages`);
         const querySnapshot = query(
             messagesCollection,
@@ -189,7 +189,7 @@ const startListeningToMessages = (id) => {
             // Check if the message received is from another user
             const lastMessage = updatedMessages[updatedMessages.length - 1];
             if (lastMessage && lastMessage.uid !== mainStore.user.uid) {
-                console.log('playing audio')
+                // console.log('playing audio')
                 messageReceivedAudio.play();
             }
             // console.log(updatedMessages)
@@ -211,7 +211,7 @@ const searchUsersByName = async (searchQuery) => {
             return userName.toLowerCase().includes(searchQuery.toLowerCase());
         });
 
-        console.log('Users matching the search query:', filteredUsers);
+        // console.log('Users matching the search query:', filteredUsers);
         // Return the filtered users or use them as needed in your application
         return filteredUsers;
     } catch (error) {
@@ -272,9 +272,13 @@ watch(() => mainStore.user, async (newUser, oldUser) => {
 
 
 // since audio is not available on the client side we use it after mounting
-onMounted(() => {
+onMounted(async () => {
     // Create an audio element
     messageReceivedAudio = new Audio("/incoming-noti.mp3");
+    if(mainStore.user){
+        await fetchAllUsers();
+        await fetchChatUsers();
+    }
 });
 
 // function to scroll to botttom

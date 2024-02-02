@@ -12,4 +12,4 @@
   </section>
 </template> 
 
-<script setup>console.log('inside marvel layout')</script>
+<!-- <script setup>console.log('inside marvel layout')</script> -->

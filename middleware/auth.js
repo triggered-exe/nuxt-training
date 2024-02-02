@@ -2,7 +2,7 @@
 // method 3  using cookies
 export default defineNuxtRouteMiddleware(async (to, from) => {
 const token = useCookie('accessToken')
-console.log(token.value)
+// console.log(token.value)
 if (to.path === '/login' || to.path === '/signup') {
   console.log('login path');
   if (token.value) {
