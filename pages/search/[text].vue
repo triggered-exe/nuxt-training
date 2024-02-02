@@ -8,6 +8,7 @@ import { onMounted } from 'vue';
 const loading = ref(false)
 const hero_data = ref([])
 const fav_data = ref([])
+const selectedHero = ref(null)
 const route = useRoute();
 const textSearched = route.params.text;
 const url = `/api/marvel/search/${textSearched}`;
@@ -21,7 +22,7 @@ onMounted(async () => {
     let data = await response.json();
     hero_data.value = data.data;
     loading.value = false;
-})``
+})
 
 // function to handle add to fav
 const handleAddandRemoveToFav = (hero) => {
@@ -51,6 +52,16 @@ const getFavButtonStyle = (hero) => {
 };
 
 
+const handleSelectHero = (hero)=>{
+    console.log(hero)
+    if(selectedHero.value){
+        selectedHero.value = null;
+        return;
+    }
+    selectedHero.value = hero;
+}
+
+
 </script>
 
 
@@ -63,7 +74,7 @@ const getFavButtonStyle = (hero) => {
         </div>
 
 
-        <div v-else-if="hero_data?.length == 0" class="flex flex-col h-full justify-center items-center text-white">
+        <div v-else-if="hero_data?.length === 0" class="flex flex-col h-full justify-center items-center text-white">
             <!-- <img src="~/assets/nothing.gif" alt="Loading..." /> -->
             <iframe src="https://giphy.com/embed/8yvdQMhayX1zbMou11" width="480" height="480" frameBorder="0"
                 class="giphy-embed" allowFullScreen></iframe>
@@ -82,7 +93,7 @@ const getFavButtonStyle = (hero) => {
                 <div class="px-1">stories: {{ hero.stories.available }}</div>
                 <div
                     class="absolute top-0 h-full w-full flex flex-col justify-center items-center gap-2 opacity-0 group-hover:opacity-100">
-                    <button class="h-15 w-36 p-2 bg-yellow-500/80 rounded-md hover:bg-yellow-600">Open</button>
+                    <button @click="handleSelectHero(hero)" class="h-15 w-36 p-2 bg-yellow-500/80 rounded-md hover:bg-yellow-600">Open</button>
                     <button @click="handleAddandRemoveToFav(hero)" class="h-15 w-36 p-2 rounded-md text-white"
                         :class="getFavButtonStyle(hero)">
                         {{ getFavButtonText(hero) }}
@@ -90,8 +101,12 @@ const getFavButtonStyle = (hero) => {
                 </div>
 
             </div>
+            <!-- display the selected hero modal using component -->
+           
         </div>
-
+        <Transition>
+            <HeroModal v-if="selectedHero" :hero="selectedHero" :handleSelectHero="handleSelectHero" />
+        </Transition>
     </div>
 </template> 
 
@@ -103,5 +118,15 @@ const getFavButtonStyle = (hero) => {
 
 .bg-poster {
     background-image: url("~/assets/54674.jpg");
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>
