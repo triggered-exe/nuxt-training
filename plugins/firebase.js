@@ -3,7 +3,7 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 export default defineNuxtPlugin(async (nuxtApp) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const config = useRuntimeConfig();
+  const config = useRuntimeConfig(); 
   
   const firebaseConfig = {
     apiKey: config.public.FB_API_KEY,
@@ -16,12 +16,11 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   
   const app = initializeApp(firebaseConfig);
   const auth = getAuth();
-  // console.log('auth is: ',auth)
   const database = getFirestore(app);
 
-  nuxtApp.vueApp.provide('auth', auth);
+  // nuxtApp.vueApp.provide('auth', auth);
   nuxtApp.provide('auth', auth);
 
-  nuxtApp.vueApp.provide('database', database);
+  // nuxtApp.vueApp.provide('database', database);
   nuxtApp.provide('database', database);
 });

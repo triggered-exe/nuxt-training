@@ -8,6 +8,6 @@ export default defineNuxtPlugin((nuxtApp) => {
 
         return result;
     }
-    nuxtApp.provide("table", table);
-    // nuxtApp.vueApp.provide("table", table);
+            nuxtApp.provide("table", table);
+            // nuxtApp.vueApp.provide("table", table);
 })      

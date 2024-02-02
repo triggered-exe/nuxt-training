@@ -189,7 +189,7 @@ const startListeningToMessages = (id) => {
             // Check if the message received is from another user
             const lastMessage = updatedMessages[updatedMessages.length - 1];
             if (lastMessage && lastMessage.uid !== mainStore.user.uid) {
-                // console.log('playing audio')
+                // console.log('playing audio'){
                 messageReceivedAudio.play();
             }
             // console.log(updatedMessages)
@@ -197,7 +197,6 @@ const startListeningToMessages = (id) => {
     } catch (error) {
         console.log(error)
     }
-
 };
 
 
