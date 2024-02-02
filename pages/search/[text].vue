@@ -21,7 +21,7 @@ onMounted(async () => {
     let data = await response.json();
     hero_data.value = data.data;
     loading.value = false;
-})
+})``
 
 // function to handle add to fav
 const handleAddandRemoveToFav = (hero) => {
@@ -63,7 +63,7 @@ const getFavButtonStyle = (hero) => {
         </div>
 
 
-        <div v-else-if="hero_data.length == 0" class="flex flex-col h-full justify-center items-center text-white">
+        <div v-else-if="hero_data?.length == 0" class="flex flex-col h-full justify-center items-center text-white">
             <!-- <img src="~/assets/nothing.gif" alt="Loading..." /> -->
             <iframe src="https://giphy.com/embed/8yvdQMhayX1zbMou11" width="480" height="480" frameBorder="0"
                 class="giphy-embed" allowFullScreen></iframe>
