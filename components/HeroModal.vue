@@ -13,7 +13,7 @@ const handleSelectDetails = (data) => {
   
 
 <template>
-    <div class=" absolute w-[90vw] h-[90vh] top-1/2 -translate-y-1/2 bg-no-repeat bg-cover p-1 overflow-hidden"
+    <div class=" absolute w-[90vw] h-[90vh] top-1/2 -translate-y-1/2 bg-no-repeat bg-cover p-1 overflow-hidden bg-center"
         :style="{ backgroundImage: `url(${hero.thumbnail.path}.${hero.thumbnail.extension})` }">
         <span @click="handleSelectHero"
             class=" z-10 absolute right-2 top-2 bg-red-600 w-[30px] h-[30px] rounded-full flex justify-center items-center text-2xl cursor-pointer">X</span>
