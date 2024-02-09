@@ -19,6 +19,11 @@ const navData = [
     },
     {
         style:"navItem max-w-[400px] w-2/3 active:scale-95 bg-purple-700 hover:bg-purple-800 font-medium rounded-full text-sm px-5 py-2 my-1 text-center",
+        to:"/tic-tac-toe",
+        name:"Tic Tac Toe (Multiplayer)"
+    },
+    {
+        style:"navItem max-w-[400px] w-2/3 active:scale-95 bg-purple-700 hover:bg-purple-800 font-medium rounded-full text-sm px-5 py-2 my-1 text-center",
         to:"/guess-the-number",
         name:"Guess Game"
     },

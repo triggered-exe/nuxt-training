@@ -1,8 +1,6 @@
-
 <script setup>
-// import Peer from '~/peerjs.min.js'; // Uncomment this line if you are importing peerjs.min.js
-const WIN_CASES = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]]
 
+const WIN_CASES = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]]
 
 const route = useRoute();
 const queryId = route.query.queryId;
@@ -175,6 +173,7 @@ const handleNotification = (message) => {
 }
 
 onMounted(() => {
+    console.log('initializing');
     initializePeer();
 });
 
@@ -198,13 +197,14 @@ onMounted(() => {
                     alt="Opponent" />
                 <img class="object-cover" v-else-if="selections.player.value.includes(index)"
                     :src="host ? '/x.png' : '/o.png'" alt="Player" />
-
                 <span v-else> click me!! </span>
             </div>
         </div>
+        <div v-if="!showBoard && !qrCodeURL" class="m-auto flex justify-center">
+        <h1>Invalid Url ..........check Again</h1>
+        </div>
     </div>
-</template>
-  
+</template> 
   
 <style scoped>
 @keyframes slideIn {
@@ -216,7 +216,6 @@ onMounted(() => {
         top: 50px;
     }
 }
-
 .notification {
     position: fixed;
     left: 50%;
