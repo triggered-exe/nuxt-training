@@ -160,8 +160,21 @@ const generateQR = id => {
 }
 
 const handleQRCodeClick = async () => {
-    navigator.clipboard.writeText(shareUrl.value);
-    handleNotification('url copied to clipboard')
+    // navigator.clipboard.writeText(shareUrl.value);
+    // handleNotification('url copied to clipboard')
+    const dummyTextArea = document.createElement('textarea');
+    dummyTextArea.value = shareUrl.value;
+    document.body.appendChild(dummyTextArea);
+    dummyTextArea.select();
+
+    try {
+        document.execCommand('copy');
+        handleNotification('URL copied to clipboard');
+    } catch (err) {
+        console.error('Unable to copy to clipboard', err);
+    } finally {
+        document.body.removeChild(dummyTextArea);
+    }
 };
 
 
