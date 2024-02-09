@@ -10,4 +10,4 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
             nuxtApp.provide("table", table);
             // nuxtApp.vueApp.provide("table", table);
-})      
+})              

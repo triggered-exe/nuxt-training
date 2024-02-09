@@ -5,11 +5,10 @@ definePageMeta({
 })
 
 const fav_data = ref([])
+const selectedHero = ref(null)
 
-console.log('hero')
 onMounted(async () => {
     fav_data.value = JSON.parse(localStorage.getItem('favouriteHeros')) || [];
-    console.log(fav_data.value)
 })
 
 // function to handle add to fav
@@ -18,10 +17,19 @@ const handleRemoveFromFav = (hero) => {
         return data.name === hero.name;
     });
     fav_data.value.splice(index, 1);
-    console.log(fav_data.value);
     localStorage.setItem("favouriteHeros", JSON.stringify(fav_data.value));
 
 };
+
+const handleSelectHero = (hero)=>{
+    if(selectedHero.value){
+        selectedHero.value = null;
+        return;
+    }
+    selectedHero.value = hero;
+}
+
+
 
 </script>
 
@@ -48,7 +56,7 @@ const handleRemoveFromFav = (hero) => {
                 <div class="px-1">stories: {{ hero.stories.available }}</div>
                 <div
                     class="absolute top-0 h-full w-full flex flex-col justify-center items-center gap-2 opacity-0 group-hover:opacity-100">
-                    <button @click="handleAddandRemoveToFav(hero)"
+                    <button @click="handleSelectHero(hero)"
                         class="h-15 w-36 p-2 bg-yellow-500/80 rounded-md hover:bg-yellow-600">Open</button>
                     <button @click="handleRemoveFromFav(hero)" class="h-15 w-36 p-2 rounded-md text-white bg-green-500/80 hover:bg-green-600">
                         Remove from Fav 
@@ -57,6 +65,9 @@ const handleRemoveFromFav = (hero) => {
 
             </div>
         </div>
+        <Transition>
+            <HeroModal v-if="selectedHero" :hero="selectedHero" :handleSelectHero="handleSelectHero" />
+        </Transition>
     </div>
 </template>
 
@@ -66,5 +77,15 @@ const handleRemoveFromFav = (hero) => {
 }
 .bg-poster{
     background-image: url("~/assets/54688.jpg");
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

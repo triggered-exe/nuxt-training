@@ -6,7 +6,6 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
   ],
   runtimeConfig: {
-
     public: {
       TIMESTAMP: process.env.TIMESTAMP,
       PRIVATE_KEY: process.env.PRIVATE_KEY,
@@ -29,8 +28,18 @@ export default defineNuxtConfig({
       FB_STORAGE_BUCKET: process.env.FB_STORAGE_BUCKET,
       FB_MESSAGING_SENDER_ID: process.env.FB_MESSAGING_SENDER_ID,
       FB_APP_ID: process.env.FB_APP_ID,
-    }
-
+    },
+     app : {
+      head: {
+        script: [
+          {
+            src: 'https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js',
+            async: true,
+          },
+        ],
+      },
+     }
+      
 
 
 })

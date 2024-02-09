@@ -12,6 +12,8 @@ const selectedHero = ref(null)
 const route = useRoute();
 const textSearched = route.params.text;
 const url = `/api/marvel/search/${textSearched}`;
+
+
 onMounted(async () => {
     loading.value = true;
     // getting data from the local storage
@@ -34,7 +36,7 @@ const handleAddandRemoveToFav = (hero) => {
         fav_data.value.splice(index, 1);
     } else {
         fav_data.value.push(hero);
-        console.log(fav_data.value);
+        // console.log(fav_data.value);
         localStorage.setItem("favouriteHeros", JSON.stringify(fav_data.value));
     }
 };
@@ -53,7 +55,7 @@ const getFavButtonStyle = (hero) => {
 
 
 const handleSelectHero = (hero)=>{
-    console.log(hero)
+    // console.log(hero)
     if(selectedHero.value){
         selectedHero.value = null;
         return;
